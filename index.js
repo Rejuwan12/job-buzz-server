@@ -25,28 +25,54 @@ const client = new MongoClient(uri, {
       // Connect the client to the server	(optional starting in v4.7)
       await client.connect();
 
-   const cetegoryCollection = client.db('jobBuzz').collection('cetegorys')
-   const postCollection = client.db('jobBuzz').collection('addProduct')
+    const cetegoryCollection =
+       client.db('jobBuzz').collection('cetegorys');
+    const appliedCollection =  
+       client.db('jobBuzz').collection('appliedJob');
 
 
 
-  app.get('/api/v1/cetegorys', async (req,res)=>{
-      const cursor = cetegoryCollection.find()
-      const result = await cursor.toArray()
-        res.send(result)
-    })
-app.get('/api/v1/cetegorys/:id', async(req, res)=>{
-    const id = req.params.id;
-    const query = {_id: new ObjectId(id) };
-    const result = await cetegoryCollection.findOne(query);
-    res.send(result)
-})
+     app.get('/api/v1/cetegorys', async (req,res)=>{
+        const cursor = cetegoryCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+      });
 
-     app.post('/api/v1/user/addProduct', async(req, res) => {
+     app.get('/api/v1/cetegorys/:id', async(req, res)=>{
+       const id = req.params.id;
+       const query = {_id: new ObjectId(id) };
+       const result = await cetegoryCollection.findOne(query);
+       res.send(result);
+      });
+
+     app.post('/api/v1/cetegorys', async(req, res) => {
         const product = req.body;
-        const result = await postCollection.insertOne(product)
+        const result = await cetegoryCollection.insertOne(product);
+        res.send(result);
+      });
+
+     // applied job related
+     app.get('/api/v1/user/applied', async (req,res)=>{
+      const cursor = appliedCollection.find();
+      const result = await cursor.toArray();
+        res.send(result);
+      });
+
+     app.post('/api/v1/user/applied', async(req, res) => {
+        const appliedJob = req.body;
+        const result = await appliedCollection.insertOne(appliedJob);
+        res.send(result);
+      });
+     
+     
+
+     app.delete('/api/v1/user/delete-job/:jobId', async(req, res) => {
+        const id = req.params.jobId;
+        const query = { _id: new ObjectId(id) };
+        const result = await cetegoryCollection.deleteOne(query);
         res.send(result)
-     })
+      });
+     
 
 
 
@@ -60,12 +86,12 @@ app.get('/api/v1/cetegorys/:id', async(req, res)=>{
   }
   run().catch(console.dir);
 
-app.get('/', (req, res) => {
-  res.send('Jobs Site Server Is Running!')
-})
 
+ //server created 
+     app.get('/', (req, res) => {
+       res.send('Jobs Site Server Is Running!')
+     })
 
-
-app.listen(port, () => {
-  console.log(`Example app listening at port ${port}`)
-})
+     app.listen(port, () => {
+       console.log(`Example app listening at port ${port}`)
+     })
