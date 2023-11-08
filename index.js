@@ -30,20 +30,49 @@ const client = new MongoClient(uri, {
     const appliedCollection =  
        client.db('jobBuzz').collection('appliedJob');
 
-
+        
 
      app.get('/api/v1/cetegorys', async (req,res)=>{
-        const cursor = cetegoryCollection.find();
+      console.log(req.query.email);
+      let query = {}
+    if (req.query?.email) {
+        query = { email: req.query.email }
+    }
+    const cursor = cetegoryCollection.find(query)
+        // const cursor = cetegoryCollection.find();
         const result = await cursor.toArray();
         res.send(result);
+        
       });
-
+        
      app.get('/api/v1/cetegorys/:id', async(req, res)=>{
        const id = req.params.id;
        const query = {_id: new ObjectId(id) };
        const result = await cetegoryCollection.findOne(query);
        res.send(result);
       });
+
+      app.put("/api/v1/cetegorys/:id",  async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) }
+        const options = { upsert: true }
+        const updateJob = req.body;
+        const newJob = {
+          $set: {
+    
+          name: updateJob.posted_the_job,
+          cetegory: updateJob.cetegory,
+          date: updateJob.Posting_Date,
+          deadline: updateJob.Application_Deadline,
+          salary: updateJob.Salary_range,
+          rating: updateJob.rating,
+          photo: updateJob.img_url,
+          details: updateJob.Details_Button
+          },
+        }
+        const result = await cetegoryCollection.updateOne(query, newJob, options)
+        res.send(result)
+      })
 
      app.post('/api/v1/cetegorys', async(req, res) => {
         const product = req.body;
@@ -58,12 +87,27 @@ const client = new MongoClient(uri, {
         res.send(result);
       });
 
+      // my job
+      app.get('/api/v1/user/applied/:id', async(req, res)=>{
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id) };
+        const result = await appliedCollection.findOne(query);
+        res.send(result);
+       });
+
      app.post('/api/v1/user/applied', async(req, res) => {
         const appliedJob = req.body;
         const result = await appliedCollection.insertOne(appliedJob);
         res.send(result);
       });
      
+      // post related
+      // app.get('/api/v1/cetegorys/:email', async(req, res)=>{
+      //   const email = req.params.email;
+      //   const query = {  email: email };
+      //   const result = await cetegoryCollection.findOne(query);
+      //   res.send(result);
+      //  });
      
 
      app.delete('/api/v1/user/delete-job/:jobId', async(req, res) => {
