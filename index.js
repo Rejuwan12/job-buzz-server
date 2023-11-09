@@ -1,5 +1,6 @@
 
 const express = require('express')
+require('dotenv').config()
 const app = express()
 const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -9,7 +10,7 @@ const port = process.env.PORT || 5000
 app.use(express.json())
 app.use(cors())
 // DB
-const uri = "mongodb+srv://jobBuzz:E4uccWspmLDAeXVj@cluster0.anrbjpf.mongodb.net/jobBuzz?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.anrbjpf.mongodb.net/jobBuzz?retryWrites=true&w=majority`;
 
 // Create a MongoClient 
 const client = new MongoClient(uri, {
@@ -60,17 +61,25 @@ const client = new MongoClient(uri, {
         const newJob = {
           $set: {
     
-          name: updateJob.posted_the_job,
+          posted_the_job: updateJob.posted_the_job,
+          Job_Title: updateJob.Job_Title,
           cetegory: updateJob.cetegory,
-          date: updateJob.Posting_Date,
-          deadline: updateJob.Application_Deadline,
-          salary: updateJob.Salary_range,
-          rating: updateJob.rating,
-          photo: updateJob.img_url,
-          details: updateJob.Details_Button
+          Posting_Date: updateJob.Posting_Date,
+          Application_Deadline: updateJob.Application_Deadline,
+          Salary_range: updateJob.Salary_range,
+          img_url: updateJob.img_url,
+          Details_Button: updateJob.Details_Button
           },
         }
         const result = await cetegoryCollection.updateOne(query, newJob, options)
+        res.send(result)
+      })
+
+      app.delete("/api/v1/cetegorys/:id", async (req, res) => {
+        const id = req.params.id;
+        const query = { _id : new ObjectId(id) }
+        const result = await cetegoryCollection.deleteOne(query)
+        console.log(id);
         res.send(result)
       })
 
