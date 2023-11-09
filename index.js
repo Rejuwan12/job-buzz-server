@@ -112,13 +112,7 @@ const client = new MongoClient(uri, {
         res.send(result);
       });
      
-      // post related
-      // app.get('/api/v1/cetegorys/:email', async(req, res)=>{
-      //   const email = req.params.email;
-      //   const query = {  email: email };
-      //   const result = await cetegoryCollection.findOne(query);
-      //   res.send(result);
-      //  });
+     
      
 
      app.delete('/api/v1/user/delete-job/:jobId', async(req, res) => {
