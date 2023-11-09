@@ -42,7 +42,7 @@ const client = new MongoClient(uri, {
         query = { email: req.query.email }
     }
     const cursor = cetegoryCollection.find(query)
-        // const cursor = cetegoryCollection.find();
+        
         const result = await cursor.toArray();
         res.send(result);
         
