@@ -3,12 +3,14 @@ const express = require('express')
 require('dotenv').config()
 const app = express()
 const cors = require('cors')
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId }=require('mongodb');
 const port = process.env.PORT || 5000
 
 //parsers
+
 app.use(express.json())
 app.use(cors())
+
 // DB
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.anrbjpf.mongodb.net/jobBuzz?retryWrites=true&w=majority`;
 
